@@ -1,5 +1,6 @@
 import PostCard from "./PostCard";
 import PostCount from "./PostCount";
+import PostSkeleton from "./PostSkeleton";
 
 function PostList({ posts }) {
   return (
@@ -17,9 +18,12 @@ function PostList({ posts }) {
       {/* จำนวนโพสต์ */}
       <PostCount count={posts.length} />
 
-      {posts.map((post) => (
-        <PostCard key={post.id} title={post.title} body={post.body} />
-      ))}
+      {/* ถ้ายังไม่มีโพสต์ให้แสดง Skeleton */}
+      {posts.length === 0
+        ? [1, 2, 3].map((n) => <PostSkeleton key={n} />)
+        : posts.map((post) => (
+            <PostCard key={post.id} title={post.title} body={post.body} />
+          ))}
     </div>
   );
 }
