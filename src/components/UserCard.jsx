@@ -5,6 +5,22 @@ function UserCard({ name, email }) {
     .map((n) => n[0])
     .join("");
 
+  // เอาตัวอักษรตัวแรกของชื่อ
+  const firstChar = name.charAt(0);
+
+  // คำนวณเลข
+  const colorIndex = firstChar.charCodeAt(0) % 3;
+
+  let avatarColor;
+
+  if (colorIndex === 0) {
+    avatarColor = "#3b82f6"; // น้ำเงิน
+  } else if (colorIndex === 1) {
+    avatarColor = "#16a34a"; // เขียว
+  } else {
+    avatarColor = "#9333ea"; // ม่วง
+  }
+
   return (
     <div
       style={{
@@ -22,7 +38,7 @@ function UserCard({ name, email }) {
         style={{
           width: "40px",
           height: "40px",
-          background: "#1e40af",
+          background: avatarColor,
           color: "white",
           borderRadius: "50%",
           display: "flex",
@@ -34,6 +50,7 @@ function UserCard({ name, email }) {
       >
         {initials}
       </div>
+
       <div>
         <div style={{ fontWeight: "bold", color: "#2d3748" }}>{name}</div>
         <div style={{ fontSize: "0.85rem", color: "#718096" }}>{email}</div>
