@@ -5,11 +5,18 @@ import PostSkeleton from "./PostSkeleton";
 
 function PostList({ posts, favorites, onToggleFavorite }) {
   const [search, setSearch] = useState("");
+  const [sortOrder, setSortOrder] = useState("desc");
 
   // กรองโพสต์ตาม search
   const filtered = posts.filter((post) =>
     post.title.toLowerCase().includes(search.toLowerCase()),
   );
+
+  // เอาโพสต์มาเรียงลำดับ
+  const sortedPosts = [...filtered].sort((a, b) =>
+    sortOrder === "desc" ? b.id - a.id : a.id - b.id,
+  );
+
   return (
     <div>
       <h2
@@ -39,6 +46,21 @@ function PostList({ posts, favorites, onToggleFavorite }) {
         }}
       />
 
+      {/* sort post */}
+      <button
+        onClick={() => setSortOrder(sortOrder === "desc" ? "asc" : "desc")}
+        style={{
+          marginBottom: "1rem",
+          padding: "0.4rem 0.8rem",
+          borderRadius: "6px",
+          border: "1px solid #cbd5e0",
+          cursor: "pointer",
+          background: "#edf2f7",
+        }}
+      >
+        {sortOrder === "desc" ? "🔽 ใหม่สุดก่อน" : "🔼 เก่าสุดก่อน"}
+      </button>
+
       {/* จำนวนโพสต์ */}
       <PostCount count={filtered.length} />
 
@@ -50,7 +72,7 @@ function PostList({ posts, favorites, onToggleFavorite }) {
           ไม่พบโพสต์ที่ค้นหา
         </p>
       ) : (
-        filtered.map((post) => (
+        sortedPosts.map((post) => (
           <PostCard
             key={post.id}
             title={post.title}
