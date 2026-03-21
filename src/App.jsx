@@ -1,8 +1,8 @@
-import { useState } from "react";
 import Navbar from "./components/Navbar";
 import PostList from "./components/PostList";
 import UserCard from "./components/UserCard";
 import AddPostForm from "./components/AddPostForm";
+import { useState, useEffect } from "react";
 
 const INITIAL_POSTS = [
   {
@@ -35,7 +35,13 @@ const USERS = [
 
 function App() {
   const [posts, setPosts] = useState(INITIAL_POSTS);
-  const [favorites, setFavorites] = useState([]); // เก็บ id ที่ถูกใจ
+  const [favorites, setFavorites] = useState(() => {
+    return JSON.parse(localStorage.getItem("favorites") || "[]");
+  }); // เก็บ id ที่ถูกใจ ไว้ใน localStorage
+
+  useEffect(() => {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+  }, [favorites]);
 
   // Toggle ถูกใจ/ยกเลิก
   function handleToggleFavorite(postId) {
