@@ -27,9 +27,9 @@ function AddPostForm({ onAddPost }) {
       <h3 style={{ margin: "0 0 0.75rem", color: "#2d3748" }}>
         เพิ่มโพสต์ใหม่
       </h3>
-
       <input
         type="text"
+        maxLength={100}
         placeholder="หัวข้อโพสต์"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
@@ -43,6 +43,17 @@ function AddPostForm({ onAddPost }) {
           boxSizing: "border-box",
         }}
       />
+
+      {/* ระดับ 1 — Character Counter */}
+      <p
+        style={{
+          margin: "0 0 0.75rem",
+          color: 100 - title.length < 10 ? "red" : "#2d3748",
+          textAlign: "right",
+        }}
+      >
+        {title.length}/100
+      </p>
 
       <textarea
         placeholder="เนื้อหาโพสต์"
@@ -60,7 +71,6 @@ function AddPostForm({ onAddPost }) {
           boxSizing: "border-box",
         }}
       />
-
       <button
         type="submit"
         style={{

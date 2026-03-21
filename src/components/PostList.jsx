@@ -42,25 +42,24 @@ function PostList({ posts, favorites, onToggleFavorite }) {
       {/* จำนวนโพสต์ */}
       <PostCount count={filtered.length} />
 
-      {/* ถ้าไม่พบโพสต์ */}
-      {filtered.length === 0 && (
+      {/* ถ้ายังไม่มีโพสต์ให้แสดง Skeleton */}
+      {posts.length === 0 ? (
+        [1, 2, 3].map((n) => <PostSkeleton key={n} />)
+      ) : filtered.length === 0 ? (
         <p style={{ color: "#718096", textAlign: "center", padding: "2rem" }}>
           ไม่พบโพสต์ที่ค้นหา
         </p>
+      ) : (
+        filtered.map((post) => (
+          <PostCard
+            key={post.id}
+            title={post.title}
+            body={post.body}
+            isFavorite={favorites.includes(post.id)}
+            onToggleFavorite={() => onToggleFavorite(post.id)}
+          />
+        ))
       )}
-
-      {/* ถ้ายังไม่มีโพสต์ให้แสดง Skeleton */}
-      {posts.length === 0
-        ? [1, 2, 3].map((n) => <PostSkeleton key={n} />)
-        : filtered.map((post) => (
-            <PostCard
-              key={post.id}
-              title={post.title}
-              body={post.body}
-              isFavorite={favorites.includes(post.id)}
-              onToggleFavorite={() => onToggleFavorite(post.id)}
-            />
-          ))}
     </div>
   );
 }
