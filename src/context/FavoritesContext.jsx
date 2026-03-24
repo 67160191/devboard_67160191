@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 // 1. สร้าง context object
 const FavoritesContext = createContext();
 
+
 // 2. Provider component — ครอบ App ทั้งหมด
 export function FavoritesProvider({ children }) {
     const [favorites, setFavorites] = useState(() => {
