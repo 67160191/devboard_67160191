@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import useFetch from "../hooks/useFetch";
 import PostCard from "./PostCard";
 import PostCount from "./PostCount";
 import PostSkeleton from "./PostSkeleton";
@@ -7,34 +8,20 @@ import LoadingSpinner from "./LoadingSpinner";
 function PostList({ favorites, onToggleFavorite }) {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  // ดึงข้อมูล post จาก API แบบ Custom
+  const { data, loading, error, refetch } = useFetch("https://jsonplaceholder.typicode.com/posts");
+  const posts = data ? data.slice(0, 20) : [];
 
   // เพิ่ม pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const postsPerPage = 10;
 
-  //แยก fetch ออกมาเป็น function (เพิ่มใหม่)
-  async function fetchPosts() {
-    try {
-      setLoading(true);
-      setError(null);
-      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-      if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
-      const data = await res.json();
-      setPosts(data.slice(0, 20)); // เอาแค่ 20 รายการแรก
-      setCurrentPage(1); // reset page ตอนโหลดไปหน้าแรก
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchPosts();
-  }, []); // [] = ทำครั้งเดียวตอน component mount
+  // โหลดข้อมูลใหม่ไปหน้าแรก
+  const handleReload = () => {
+    if (refetch) refetch();
+    setCurrentPage(1);
+  };
 
   // reset page เมื่อ search หรือ sort เปลี่ยน
   useEffect(() => {
@@ -91,7 +78,7 @@ function PostList({ favorites, onToggleFavorite }) {
         โพสต์ล่าสุด
         {/* ปุ่มโหลดใหม่ */}
         <button
-          onClick={fetchPosts}
+          onClick={handleReload}
           disabled={loading}
           style={{
             padding: "0.4rem 0.8rem",
@@ -149,6 +136,7 @@ function PostList({ favorites, onToggleFavorite }) {
           ไม่พบโพสต์ที่ค้นหา
         </p>
       ) : (
+
         // เปลี่ยนจาก sortedPosts เป็น paginatedPosts
         paginatedPosts.map((post) => (
           <PostCard
