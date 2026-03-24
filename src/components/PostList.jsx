@@ -11,21 +11,23 @@ function PostList({ favorites, onToggleFavorite }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    async function fetchPosts() {
-      try {
-        setLoading(true);
-        setError(null);
-        const res = await fetch("https://jsonplaceholder.typicode.com/posts");
-        if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
-        const data = await res.json();
-        setPosts(data.slice(0, 20)); // เอาแค่ 20 รายการแรก
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
+  //แยก fetch ออกมาเป็น function (เพิ่มใหม่)
+  async function fetchPosts() {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch("https://jsonplaceholder.typicode.com/posts");
+      if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
+      const data = await res.json();
+      setPosts(data.slice(0, 20)); // เอาแค่ 20 รายการแรก
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
+  }
+
+  useEffect(() => {
     fetchPosts();
   }, []); // [] = ทำครั้งเดียวตอน component mount
 
@@ -60,14 +62,31 @@ function PostList({ favorites, onToggleFavorite }) {
     <div>
       <h2
         style={{
-          color: "#2d3748",
           borderBottom: "2px solid #1e40af",
+          display: "flex",
+          color: "#2d3748",
+          justifyContent: "space-between",
+          alignItems: "center",
           paddingBottom: "0.5rem",
         }}
       >
         โพสต์ล่าสุด
+        {/* ปุ่มโหลดใหม่ */}
+        <button
+          onClick={fetchPosts}
+          disabled={loading}
+          style={{
+            padding: "0.4rem 0.8rem",
+            borderRadius: "6px",
+            border: "1px solid #cbd5e0",
+            cursor: "pointer",
+            background: "#edf2f7",
+            fontSize: "1rem",
+          }}
+        >
+          {loading ? "กำลังโหลด...." : "🔄 โหลดใหม่"}
+        </button>
       </h2>
-
       {/* Search Input */}
       <input
         type="text"
