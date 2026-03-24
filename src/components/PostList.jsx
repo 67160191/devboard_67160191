@@ -11,6 +11,10 @@ function PostList({ favorites, onToggleFavorite }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // เพิ่ม pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 10;
+
   //แยก fetch ออกมาเป็น function (เพิ่มใหม่)
   async function fetchPosts() {
     try {
@@ -20,6 +24,7 @@ function PostList({ favorites, onToggleFavorite }) {
       if (!res.ok) throw new Error("ดึงข้อมูลไม่สำเร็จ");
       const data = await res.json();
       setPosts(data.slice(0, 20)); // เอาแค่ 20 รายการแรก
+      setCurrentPage(1); // reset page ตอนโหลดไปหน้าแรก
     } catch (err) {
       setError(err.message);
     } finally {
@@ -31,6 +36,11 @@ function PostList({ favorites, onToggleFavorite }) {
     fetchPosts();
   }, []); // [] = ทำครั้งเดียวตอน component mount
 
+  // reset page เมื่อ search หรือ sort เปลี่ยน
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, sortOrder]);
+
   // กรองโพสต์ตาม search
   const filtered = posts.filter((post) =>
     post.title.toLowerCase().includes(search.toLowerCase()),
@@ -39,6 +49,14 @@ function PostList({ favorites, onToggleFavorite }) {
   // เอาโพสต์มาเรียงลำดับ
   const sortedPosts = [...filtered].sort((a, b) =>
     sortOrder === "desc" ? b.id - a.id : a.id - b.id,
+  );
+
+  //  pagination logic (ตัดข้อมูลเป็นหน้า)
+  const totalPages = Math.ceil(filtered.length / postsPerPage);
+
+  const paginatedPosts = sortedPosts.slice(
+    (currentPage - 1) * postsPerPage,
+    currentPage * postsPerPage,
   );
 
   if (loading) return <LoadingSpinner />;
@@ -87,6 +105,7 @@ function PostList({ favorites, onToggleFavorite }) {
           {loading ? "กำลังโหลด...." : "🔄 โหลดใหม่"}
         </button>
       </h2>
+
       {/* Search Input */}
       <input
         type="text"
@@ -130,17 +149,45 @@ function PostList({ favorites, onToggleFavorite }) {
           ไม่พบโพสต์ที่ค้นหา
         </p>
       ) : (
-        sortedPosts.map((post) => (
+        // เปลี่ยนจาก sortedPosts เป็น paginatedPosts
+        paginatedPosts.map((post) => (
           <PostCard
             key={post.id}
             post={post}
-            // title={post.title}
-            // body={post.body}
             isFavorite={favorites.includes(post.id)}
             onToggleFavorite={() => onToggleFavorite(post.id)}
           />
         ))
       )}
+
+      {/* pagination UI */}
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          alignItems: "center",
+          marginBottom: "1rem",
+          justifyContent: "center",
+        }}
+      >
+        <button
+          onClick={() => setCurrentPage((p) => p - 1)}
+          disabled={currentPage === 1}
+        >
+          ← ก่อนหน้า
+        </button>
+
+        <span>
+          หน้า {currentPage} / {totalPages || 1}
+        </span>
+
+        <button
+          onClick={() => setCurrentPage((p) => p + 1)}
+          disabled={currentPage === totalPages || totalPages === 0}
+        >
+          ถัดไป →
+        </button>
+      </div>
     </div>
   );
 }
