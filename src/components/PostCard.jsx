@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useFavorites } from "../context/FavoritesContext";
 import CommentList from "./CommentList";
 
-function PostCard({ post, isFavorite, onToggleFavorite }) {
+function PostCard({ post }) {
   const { favorites, toggleFavorite } = useFavorites();
   const isFavorite = favorites.includes(post.id);
   const [showComments, setShowComments] = useState(false);
@@ -26,7 +26,7 @@ function PostCard({ post, isFavorite, onToggleFavorite }) {
       <div style={{ display: "flex", gap: "0.5rem" }}>
         {/* ปุ่มถูกใจ */}
         <button
-          onClick={onToggleFavorite}
+          onClick={() => toggleFavorite(post.id)}
           style={{
             background: "none",
             border: "none",

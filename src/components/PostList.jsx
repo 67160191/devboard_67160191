@@ -5,7 +5,7 @@ import PostCount from "./PostCount";
 import PostSkeleton from "./PostSkeleton";
 import LoadingSpinner from "./LoadingSpinner";
 
-function PostList({ favorites, onToggleFavorite }) {
+function PostList() {
   const [search, setSearch] = useState("");
   const [sortOrder, setSortOrder] = useState("desc");
 
@@ -142,8 +142,6 @@ function PostList({ favorites, onToggleFavorite }) {
           <PostCard
             key={post.id}
             post={post}
-            isFavorite={favorites.includes(post.id)}
-            onToggleFavorite={() => onToggleFavorite(post.id)}
           />
         ))
       )}
