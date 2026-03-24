@@ -8,6 +8,7 @@ import FavoritesPage from "./pages/FavoritesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import SearchPage from "./pages/SearchPage";
 
+
 function App() {
   return (
     <div>
