@@ -1,7 +1,11 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useFavorites } from "../context/FavoritesContext";
 import CommentList from "./CommentList";
 
 function PostCard({ post, isFavorite, onToggleFavorite }) {
+  const { favorites, toggleFavorite } = useFavorites();
+  const isFavorite = favorites.includes(post.id);
   const [showComments, setShowComments] = useState(false);
 
   return (
